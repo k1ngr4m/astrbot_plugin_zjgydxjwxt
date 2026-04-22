@@ -1,0 +1,36 @@
+{
+    "cookie": {
+        "description": "教务系统请求 Cookie",
+        "type": "string",
+        "hint": "填浏览器抓包到的完整 Cookie，失效后需要更新",
+        "default": "_ht=person; EMAP_LANG=zh; THEME=indigo; GS_SESSIONID=2bf55f92585bd59958a3ff654d559bb6; _WEU=vAqiRIftAcC6m8Qm83PsfRK4zP9QphCmjyfD9BmYr89zCstjBVgC8H0AgR2O7wmF4LLzY0zov97N_VGDOjKnGSb5nsU4LI5*AuR2WA2Lj_2mx5KnjxdH9OF3KQ7hIc9GJHJxjIq3bprr65KbhDPrQZLdi9DFu7QxXYtiQx046UvdUWRKWjfQenvKjvedzhJQoagvasj1901IcOYanQfON6KSOKqE9biDOcD2Mj2FH_FTzMyofcVEjTf0KeFpLibimqDKSJKzPttYfkAI3Ylc0RAoDZI0eSAtNoPWEbA4UQqPz6nbDwoGisUPtLUb9FwrmEtu5esV45JAG*htgf7EexjGsdG8HnC8M43lY8DP1PVI266OM620so..; route=3448423386cc74f8e6f54d6a40c37c33; JSESSIONID=dSyz6SuFl-qLr3jfmTpo2bpLGeG1GTnKVcJBTVV9fhVhiHFyWRDB!-914309848"
+    },
+    "timeout": {
+        "description": "接口超时时间(秒)",
+        "type": "int",
+        "default": 15
+    },
+    "auto_query_enabled": {
+        "description": "是否启用自动查询",
+        "type": "bool",
+        "default": true
+    },
+    "auto_query_interval_minutes": {
+        "description": "自动查询间隔(分钟)",
+        "type": "int",
+        "hint": "默认10分钟，最小1分钟",
+        "default": 10
+    },
+    "auto_query_window_start": {
+        "description": "自动查询开始时间",
+        "type": "string",
+        "hint": "北京时间，HH:MM 格式，例如 08:00",
+        "default": "08:00"
+    },
+    "auto_query_window_end": {
+        "description": "自动查询结束时间",
+        "type": "string",
+        "hint": "北京时间，HH:MM 格式，例如 22:00",
+        "default": "22:00"
+    }
+}
