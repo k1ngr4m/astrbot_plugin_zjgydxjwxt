@@ -123,9 +123,11 @@ class ZjutResultQueryPlugin(Star):
         if self._is_empty_result(payload):
             logger.info("手动结果查询完成: user=%s, result=empty", user_key)
             yield event.plain_result("暂无结果。")
+            yield event.plain_result(self._format_payload(payload))
             return
 
         logger.info("手动结果查询完成: user=%s, result=non_empty", user_key)
+        yield event.plain_result("查询到非空结果，详情如下：")
         yield event.plain_result(self._format_payload(payload))
 
     @filter.command("自动查询")
@@ -206,16 +208,7 @@ class ZjutResultQueryPlugin(Star):
 
     @staticmethod
     def _format_payload(payload: dict[str, Any]) -> str:
-        if payload.get("success") is False:
-            message = payload.get("msg") or payload.get("message") or "接口返回失败。"
-            return f"查询失败：{message}"
-
-        fwpjg = payload.get("fwpjgList") if isinstance(payload.get("fwpjgList"), list) else []
-        pyjg = payload.get("pyjgList") if isinstance(payload.get("pyjgList"), list) else []
-
-        summary = f"查询成功：fwpjgList {len(fwpjg)} 条，pyjgList {len(pyjg)} 条。"
-        details = json.dumps({"fwpjgList": fwpjg, "pyjgList": pyjg}, ensure_ascii=False, indent=2)
-        return f"{summary}\n{details}"
+        return json.dumps(payload, ensure_ascii=False, indent=2)
 
     def _get_user_key(self, event: AstrMessageEvent) -> str:
         sender_id = str(event.get_sender_id() or "").strip()
@@ -409,10 +402,10 @@ class ZjutResultQueryPlugin(Star):
                 continue
 
             await self._touch_checked_at(user_key)
-            if self._is_empty_result(payload):
+            is_empty = self._is_empty_result(payload)
+            if is_empty:
                 skipped_empty += 1
                 logger.info("自动查询用户完成: user=%s, result=empty", user_key)
-                continue
 
             message = self._format_payload(payload)
             fingerprint = hashlib.sha256(message.encode("utf-8")).hexdigest()
@@ -422,6 +415,8 @@ class ZjutResultQueryPlugin(Star):
                 logger.info("自动查询用户跳过推送: user=%s, reason=duplicate", user_key)
                 continue
 
+            prefix = "自动查询暂无结果，详情如下：" if is_empty else "自动查询发现新结果，详情如下："
+            await self.context.send_message(session_id, MessageChain().message(prefix))
             await self.context.send_message(session_id, MessageChain().message(message))
             pushed += 1
             logger.info("自动查询用户推送成功: user=%s, session=%s", user_key, session_id)
